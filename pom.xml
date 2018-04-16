@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>dtb-web-ui</groupId>
+	<artifactId>dtb-web-ui</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>dtb-web-ui</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-server</artifactId>
+			<version>1.5.7</version>
+		</dependency>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-server-ui-login</artifactId>
+			<version>1.5.7</version>
+		</dependency>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-server-ui-hystrix</artifactId>
+			<version>1.5.7</version>
+		</dependency>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-server-ui-activiti</artifactId>
+			<version>1.5.7</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<compilerArguments>
+						<source>1.8</source>
+						<target>1.8</target>
+						<encoding>UTF-8</encoding>
+					</compilerArguments>
+				</configuration>
+			</plugin>
+
+
+			<!-- 打包jar http://maven.apache.org/plugins/maven-jar-plugin/index.html -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<goals>
+					<goal>jar</goal>
+				</goals>
+				<configuration>
+
+				</configuration>
+			</plugin>
+			<!-- springboot 打包信息 -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- 拷贝依赖的Jar https://maven.apache.org/plugins/maven-dependency-plugin/usage.html -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/release/lib_temp</outputDirectory>
+							<excludeClassifiers>sources</excludeClassifiers>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- 执行ant任务 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>release</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete dir="${project.build.directory}/${project.name}/config"></delete>
+								<delete dir="${project.build.directory}/${project.name}/lib"></delete>
+								<delete dir="${project.build.directory}/${project.name}/bin"></delete>
+
+								<mkdir dir="${project.build.directory}/${project.name}/config"></mkdir>
+								<mkdir dir="${project.build.directory}/${project.name}/lib"></mkdir>
+								<mkdir dir="${project.build.directory}/${project.name}/bin"></mkdir>
+
+								<copy todir="${project.build.directory}/${project.name}/config">
+									<fileset dir="${basedir}/src/main/resources" />
+								</copy>
+								<copy todir="${project.build.directory}/${project.name}/bin">
+									<fileset dir="${basedir}/bin" />
+								</copy>
+								<copy todir="${project.build.directory}/${project.name}/lib">
+									<fileset dir="${basedir}/target">
+										<exclude name="*-sources.jar"></exclude>
+										<exclude name="*-javadoc.jar"></exclude>
+										<include name="*.jar"></include>
+									</fileset>
+								</copy>
+								<copy todir="${project.build.directory}/${project.name}/lib">
+									<fileset dir="${project.build.directory}/release/lib_temp">
+										<exclude name="*-sources.jar"></exclude>
+									</fileset>
+								</copy>
+								<delete dir="${project.build.directory}/release/lib_temp"></delete>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
