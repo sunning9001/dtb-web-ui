@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEST_DIR=$HOME/web-admin/bin
+DEST_DIR=$HOME/dtb-web-ui/bin
 
 cd $DEST_DIR
 

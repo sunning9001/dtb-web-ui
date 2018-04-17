@@ -2,9 +2,9 @@
 
 export JAVA_HOME=$HOME/jdk1.7.0_21
 
-export MAIN_SERVER_OBJECT=com.afis.web.WebServerApplication
+export MAIN_SERVER_OBJECT=com.afis.dtb.SpringBootAdminApplication
 export MAIN_SERVRt_OPTS=" -d64 -server -Xms1024M -Xmx1536M "
-export HFP_SERVER_HOME=$HOME/web-admin
+export HFP_SERVER_HOME=$HOME/dtb-web-ui
 export HFP_SERVER_CONFIG=$HFP_SERVER_HOME/config
 export HFP_SERVER_LIB=$HFP_SERVER_HOME/lib
 export HFP_SERVER_LOG=$HFP_SERVER_HOME/logs
